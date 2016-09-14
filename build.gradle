@@ -22,12 +22,16 @@ jar {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+group = "uk.gov.hmrc"
+
+
 repositories {
     mavenCentral()
 }
 
 
 dependencies {
+
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-devtools')
     compile('org.projectlombok:lombok')
@@ -37,8 +41,4 @@ dependencies {
             'org.spockframework:spock-core:1.0-groovy-2.4',
             'org.codehaus.groovy:groovy-all:2.4.6',
             'org.spockframework:spock-spring:1.0-groovy-2.4')
-}
-
-dependencyManagement {
-
 }
