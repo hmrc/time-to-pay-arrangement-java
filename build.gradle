@@ -19,8 +19,8 @@ jar {
     baseName = 'time-to-pay-arrangement'
     version = '0.0.1-SNAPSHOT'
 }
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+
+final javaVersion = 1.8
 
 group = "uk.gov.hmrc"
 
@@ -36,6 +36,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-devtools')
     compile('org.projectlombok:lombok')
     compile('org.springframework.boot:spring-boot-starter-web')
+    compile group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '4.7'
+    compile group: 'commons-io', name: 'commons-io',version: '2.4'
 
     testCompile('org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-core:1.0-groovy-2.4',
