@@ -3,12 +3,12 @@ buildscript {
         springBootVersion = '1.4.0.RELEASE'
     }
     repositories {
-        maven  { url "https://plugins.gradle.org/m2/" }
+        maven { url 'http://jcenter.bintray.com'}
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "gradle.plugin.com.palantir.gradle.gitversion:gradle-git-version:0.5.2"
+        classpath "com.palantir.gradle.gitversion:gradle-git-version:0.5.2"
     }
 }
 
