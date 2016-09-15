@@ -52,7 +52,7 @@ public class JsonLogstashEncoder extends EncoderBase<ILoggingEvent> {
     }
 
     private String resolveAppName() {
-        return System.getProperty("spring.application.name");
+        return System.getProperty("application.name");
     }
 
     @Override
