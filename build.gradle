@@ -59,7 +59,7 @@ dependencies {
 
 
 task tar(type: Tar, dependsOn: bootRepackage) {
-    from('build/libs') {
+    from('target/libs') {
         include '*.jar'
         into('lib')
     }
