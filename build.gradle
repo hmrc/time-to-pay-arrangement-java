@@ -31,7 +31,7 @@ jar {
 final javaVersion = 1.8
 
 group = "uk.gov.hmrc"
-version = getVersion()
+version = gitVersion()
 
 repositories {
 
@@ -81,6 +81,7 @@ publishing {
     }
 }
 
+
 bintray {
     user = credentialsProperty('user')
     key = credentialsProperty('password')
@@ -90,7 +91,7 @@ bintray {
         name = this.project.name
         userOrg = 'hmrc'
         version {
-            name = getVersion()
+            name = this.project.version
             vcsTag = 'None'
         }
     }
