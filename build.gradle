@@ -16,6 +16,8 @@ buildscript {
 
 buildDir = 'target'
 
+
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
@@ -101,6 +103,13 @@ bintray {
     }
     publish = true
 }
+
+test {
+    reports.junitXml.destination = 'target/test-reports'
+}
+
+
+
 
 private def credentialsProperty(String key) {
     def credentials = new Properties()
