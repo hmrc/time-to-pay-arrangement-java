@@ -37,6 +37,8 @@ final javaVersion = 1.8
 group = "uk.gov.hmrc"
 version = gitVersion()
 
+println("gradle git versioned as $version")
+
 repositories {
 
     maven { url 'http://jcenter.bintray.com'}
