@@ -13,6 +13,7 @@ public class TermsAndConditionsController {
 
     @GetMapping
     public String terms() {
+        log.info("Terms controller");
         return "Welcome to TTPA";
     }
 }
