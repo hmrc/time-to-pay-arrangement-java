@@ -4,11 +4,13 @@ buildscript {
     }
     repositories {
         maven { url 'http://jcenter.bintray.com'}
+        maven { url 'http://dl.bintray.com/hmrc/releases'}
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "com.palantir.gradle.gitversion:gradle-git-version:0.5.2"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1"
     }
 }
 
@@ -17,6 +19,9 @@ apply plugin: 'eclipse'
 apply plugin: 'spring-boot'
 apply plugin: 'groovy'
 apply plugin: 'com.palantir.git-version'
+apply plugin: "com.jfrog.bintray"
+apply plugin: 'maven-publish'
+apply plugin: 'distribution'
 
 jar {
     baseName = 'time-to-pay-arrangement'
@@ -26,13 +31,13 @@ jar {
 final javaVersion = 1.8
 
 group = "uk.gov.hmrc"
-version = gitVersion()
+version = getVersion()
 
 repositories {
+
+    maven { url 'http://jcenter.bintray.com'}
     mavenCentral()
 }
-
-
 
 dependencies {
 
@@ -47,4 +52,56 @@ dependencies {
             'org.spockframework:spock-core:1.0-groovy-2.4',
             'org.codehaus.groovy:groovy-all:2.4.6',
             'org.spockframework:spock-spring:1.0-groovy-2.4')
+}
+
+
+
+task tar(type: Tar, dependsOn: bootRepackage) {
+    from('build/libs') {
+        include '*.jar'
+        into('lib')
+    }
+    from ('src/main/bin') {
+        fileMode 0755
+        into('bin')
+    }
+    extension = 'tgz'
+    compression = Compression.GZIP
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact tar
+        }
+    }
+}
+
+
+build.dependsOn(tar)
+
+bintray {
+    user = credentialsProperty('user')
+    key = credentialsProperty('password')
+    publications = ['mavenJava']
+    pkg {
+        repo = 'releases'
+        name = this.project.name
+        userOrg = 'hmrc'
+        version {
+            name = this.version
+            vcsTag = 'None'
+        }
+    }
+    publish = true
+}
+
+private def credentialsProperty(String key) {
+    def credentials = new Properties()
+    def file = new File("${System.properties['user.home']}", '/.bintray/.credentials')
+    if (file.exists()) {
+        credentials.load(file.newDataInputStream())
+    }
+    credentials.get(key)
 }
