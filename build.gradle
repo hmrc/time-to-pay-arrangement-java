@@ -86,8 +86,10 @@ bintray {
     user = credentialsProperty('user')
     key = credentialsProperty('password')
     publications = ['mavenJava']
+    def repo = System.properties["releases"] == null ? "release-candidates" : "releases"
+    println("repo '$repo'")
     pkg {
-        repo = 'release-candidates'
+        repo = repo
         name = this.project.name
         userOrg = 'hmrc'
         version {
