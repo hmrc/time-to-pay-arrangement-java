@@ -90,7 +90,7 @@ bintray {
         name = this.project.name
         userOrg = 'hmrc'
         version {
-            name = this.project.version
+            name = getVersion()
             vcsTag = 'None'
         }
     }
