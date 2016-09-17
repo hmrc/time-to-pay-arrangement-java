@@ -3,7 +3,7 @@
 
 # Now we check to see if there are any java opts on the environemnt.
 # These get listed first, with the script able to override them.
-java_opts="-Dapplication.name=ttpa"
+java_opts="-Dapplication.name=time-to-pay-arrangement"
 
 if [[ "$JAVA_OPTS" != "" ]]; then
     java_opts=" ${JAVA_OPTS}"
