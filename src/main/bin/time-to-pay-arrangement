@@ -12,5 +12,7 @@ fi
 
 args="$@"
 
+echo "Arguments being passed in $args"
+
 JAR=$(find ./lib -type f -name time-to-pay-arrangement-*.jar)
 exec java ${java_opts} ${args} -jar $JAR
