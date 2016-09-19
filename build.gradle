@@ -68,6 +68,7 @@ task tar(type: Tar, dependsOn: bootRepackage) {
         into('lib')
     }
     from ('src/main/bin') {
+        fileMode 0755
         into('bin')
     }
     extension = 'tgz'
