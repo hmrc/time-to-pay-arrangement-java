@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @ConfigurationProperties(
-        prefix = "microservice.metrics"
+        prefix = "metrics"
 )
 @Data
 @Component
