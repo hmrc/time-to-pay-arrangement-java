@@ -5,12 +5,14 @@ buildscript {
     repositories {
         maven { url 'http://jcenter.bintray.com'}
         maven { url 'http://dl.bintray.com/hmrc/releases'}
+        maven { url 'http://repo.spring.io/plugins-release' }
         mavenCentral()
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath "com.palantir.gradle.gitversion:gradle-git-version:0.5.2"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1"
+        classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
     }
 }
 
@@ -26,6 +28,7 @@ apply plugin: 'com.palantir.git-version'
 apply plugin: "com.jfrog.bintray"
 apply plugin: 'maven-publish'
 apply plugin: 'distribution'
+apply plugin: 'propdeps'
 
 jar {
     baseName = 'time-to-pay-arrangement'
@@ -47,12 +50,17 @@ repositories {
 
 dependencies {
 
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+
     compile('org.springframework.boot:spring-boot-starter-actuator')
     compile('org.springframework.boot:spring-boot-devtools')
     compile('org.projectlombok:lombok')
     compile('org.springframework.boot:spring-boot-starter-web')
-    compile group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '4.7'
     compile group: 'commons-io', name: 'commons-io',version: '2.4'
+    compile group: 'com.github.jgoelen', name: 'graphite-spring-boot-starter', version: '0.2.0'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-json', version: '3.1.2'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-logback', version: '3.1.2'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-servlet', version: '3.1.2'
 
     testCompile('org.springframework.boot:spring-boot-starter-test',
             'org.spockframework:spock-core:1.0-groovy-2.4',
@@ -60,6 +68,7 @@ dependencies {
             'org.spockframework:spock-spring:1.0-groovy-2.4')
 }
 
+compileJava.dependsOn(processResources)
 
 
 task tar(type: Tar, dependsOn: bootRepackage) {
