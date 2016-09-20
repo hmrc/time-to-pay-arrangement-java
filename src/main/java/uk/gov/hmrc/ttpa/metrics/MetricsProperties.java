@@ -3,7 +3,6 @@ package uk.gov.hmrc.ttpa.metrics;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +12,9 @@ import java.util.concurrent.TimeUnit;
         prefix = "metrics"
 )
 @Data
-@Component
 public class MetricsProperties {
 
+    public  static final String PREFIX = "metrics.";
     private boolean enabled;
     private List<String> jvm = new ArrayList<>();
     private Graphite graphite;
