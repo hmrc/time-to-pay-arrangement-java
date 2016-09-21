@@ -1,7 +1,5 @@
 package uk.gov.hmrc.ttpa
 
-import spock.lang.Specification
-
 class TermsControllerSpec extends IntegrationSpec {
 
     def "can get terms"() {

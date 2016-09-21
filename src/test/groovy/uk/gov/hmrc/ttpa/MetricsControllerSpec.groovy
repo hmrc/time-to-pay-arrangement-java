@@ -1,12 +1,6 @@
 package uk.gov.hmrc.ttpa
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.beans.factory.annotation.Autowired
-
 class MetricsControllerSpec extends IntegrationSpec {
-
-    @Autowired
-    def ObjectMapper mapper
 
     def "can get meters count from metrics info"() {
         given:
