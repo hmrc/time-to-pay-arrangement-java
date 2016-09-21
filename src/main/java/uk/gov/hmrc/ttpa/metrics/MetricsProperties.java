@@ -13,10 +13,9 @@ import java.util.concurrent.TimeUnit;
 @Data
 public class MetricsProperties {
 
-    public  static final String PREFIX = "metrics.";
+    public static final String PREFIX = "metrics.";
     private boolean enabled;
     private Boolean jvm;
-    private Graphite graphite;
     private TimeUnit rateUnit;
     private TimeUnit durationUnit;
     private Boolean showSamples;
@@ -27,10 +26,4 @@ public class MetricsProperties {
         enabled = true;
     }
 
-    @Data
-    public static class Graphite {
-        private String host;
-        private Integer port;
-        private String prefix;
-    }
 }
