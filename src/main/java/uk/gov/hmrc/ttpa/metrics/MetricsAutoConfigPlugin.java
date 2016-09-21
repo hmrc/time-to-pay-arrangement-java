@@ -37,9 +37,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class MetricsAutoConfigPlugin {
 
     private MetricRegistry metricRegistry;
-
     private ObjectMapper objectMapper;
-
     private MetricsProperties metricsProperties;
 
     @Bean
@@ -56,9 +54,7 @@ public class MetricsAutoConfigPlugin {
         return new MetricRegistryListener();
     }
 
-
     public static class MetricRegistryListener implements ServletContextListener {
-
         @Autowired
         private MetricRegistry metricRegistry;
 
@@ -77,7 +73,6 @@ public class MetricsAutoConfigPlugin {
     @PostConstruct
     public void start() {
         log.info("Detected metrics properties configuration...");
-
         boolean jvmMetricsEnabled = ofNullable(metricsProperties.getJvm()).orElse(FALSE);
 
         if (jvmMetricsEnabled) {
@@ -97,15 +92,9 @@ public class MetricsAutoConfigPlugin {
             instrumentedAppender.start();
         }
 
-        TimeUnit rateUnit =
-                ofNullable(metricsProperties.getRateUnit())
-                        .orElse(SECONDS);
-
-        TimeUnit durationUnit = ofNullable(metricsProperties.getDurationUnit())
-                .orElse(SECONDS);
-
-        Boolean showSamples = ofNullable(metricsProperties.getShowSamples())
-                .orElse(FALSE);
+        TimeUnit rateUnit = ofNullable(metricsProperties.getRateUnit()).orElse(SECONDS);
+        TimeUnit durationUnit = ofNullable(metricsProperties.getDurationUnit()).orElse(SECONDS);
+        Boolean showSamples = ofNullable(metricsProperties.getShowSamples()).orElse(FALSE);
 
         MetricsModule metricsModule = new MetricsModule(rateUnit, durationUnit, showSamples);
         objectMapper.registerModule(metricsModule);
@@ -120,7 +109,6 @@ public class MetricsAutoConfigPlugin {
     private MetricSet createInstance(String clazz) {
         try {
             Object e = Class.forName(clazz).newInstance();
-
             if (e instanceof MetricSet) {
                 return (MetricSet) e;
             } else {
