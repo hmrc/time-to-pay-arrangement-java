@@ -2,10 +2,10 @@ package uk.gov.hmrc.ttpa.metrics;
 
 import ch.qos.logback.classic.Logger;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricSet;
 import com.codahale.metrics.json.MetricsModule;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
-import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -21,6 +21,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Boolean.FALSE;
@@ -32,47 +34,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @EnableConfigurationProperties(value = MetricsProperties.class)
 @ConditionalOnProperty(prefix = MetricsProperties.PREFIX, name = "enabled", havingValue = "true")
 @Configuration
-public class MetricsPlugin {
+public class MetricsAutoConfigPlugin {
 
     private MetricRegistry metricRegistry;
 
     private ObjectMapper objectMapper;
 
     private MetricsProperties metricsProperties;
-
-    @PostConstruct
-    public void start() {
-        log.info("Detected metrics properties configuration...");
-
-        metricRegistry.registerAll(new GarbageCollectorMetricSet());
-        metricRegistry.registerAll(new MemoryUsageGaugeSet());
-        metricRegistry.registerAll(new ThreadStatesGaugeSet());
-
-        Logger logger = (Logger) log;
-
-        InstrumentedAppender instrumentedAppender = new InstrumentedAppender(metricRegistry);
-        instrumentedAppender.setContext(logger.getLoggerContext());
-        instrumentedAppender.start();
-
-
-        TimeUnit rateUnit =
-                ofNullable(metricsProperties.getRateUnit())
-                        .orElse(SECONDS);
-
-        TimeUnit durationUnit = ofNullable(metricsProperties.getDurationUnit())
-                .orElse(SECONDS);
-
-        Boolean showSamples = ofNullable(metricsProperties.getShowSamples())
-                .orElse(FALSE);
-
-        MetricsModule metricsModule = new MetricsModule(rateUnit, durationUnit, showSamples);
-        objectMapper.registerModule(metricsModule);
-    }
-
-    @PreDestroy
-    public void stop() {
-
-    }
 
     @Bean
     public FilterRegistrationBean instrumentedFilter() {
@@ -104,4 +72,75 @@ public class MetricsPlugin {
 
         }
     }
+
+
+    @PostConstruct
+    public void start() {
+        log.info("Detected metrics properties configuration...");
+
+        boolean jvmMetricsEnabled = ofNullable(metricsProperties.getJvm()).orElse(FALSE);
+
+        if (jvmMetricsEnabled) {
+            ofNullable(metricsProperties.getSets())
+                    .orElse(defaultJvmMetrics())
+                    .stream()
+                    .map(this::createInstance)
+                    .filter(x -> x != null)
+                    .forEach(m -> metricRegistry.registerAll(m));
+        }
+
+        boolean logbackEnabled = ofNullable(metricsProperties.getLogback()).orElse(FALSE);
+        if (logbackEnabled) {
+            Logger logger = (Logger) log;
+            InstrumentedAppender instrumentedAppender = new InstrumentedAppender(metricRegistry);
+            instrumentedAppender.setContext(logger.getLoggerContext());
+            instrumentedAppender.start();
+        }
+
+        TimeUnit rateUnit =
+                ofNullable(metricsProperties.getRateUnit())
+                        .orElse(SECONDS);
+
+        TimeUnit durationUnit = ofNullable(metricsProperties.getDurationUnit())
+                .orElse(SECONDS);
+
+        Boolean showSamples = ofNullable(metricsProperties.getShowSamples())
+                .orElse(FALSE);
+
+        MetricsModule metricsModule = new MetricsModule(rateUnit, durationUnit, showSamples);
+        objectMapper.registerModule(metricsModule);
+
+        log.info("Metric plugin initialisation complete.");
+    }
+
+    @PreDestroy
+    public void stop() {
+    }
+
+    private MetricSet createInstance(String clazz) {
+        try {
+            Object e = Class.forName(clazz).newInstance();
+
+            if (e instanceof MetricSet) {
+                return (MetricSet) e;
+            } else {
+                log.warn("Skipping metric " + clazz + " not an instance of MetricSet");
+                return null;
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            log.warn("Unable to load metrics class " + clazz, ex);
+        }
+        return null;
+    }
+
+
+    private Set<String> defaultJvmMetrics() {
+        Set<String> jvm = new HashSet<>();
+        jvm.add(GarbageCollectorMetricSet.class.getName());
+        jvm.add(MemoryUsageGaugeSet.class.getName());
+        jvm.add(MemoryUsageGaugeSet.class.getName());
+        return jvm;
+    }
+
+
 }

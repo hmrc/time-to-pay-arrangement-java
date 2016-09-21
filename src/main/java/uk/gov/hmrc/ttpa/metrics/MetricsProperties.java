@@ -4,8 +4,7 @@ package uk.gov.hmrc.ttpa.metrics;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @ConfigurationProperties(
@@ -16,11 +15,13 @@ public class MetricsProperties {
 
     public  static final String PREFIX = "metrics.";
     private boolean enabled;
-    private List<String> jvm = new ArrayList<>();
+    private Boolean jvm;
     private Graphite graphite;
     private TimeUnit rateUnit;
     private TimeUnit durationUnit;
     private Boolean showSamples;
+    private Set<String> sets;
+    private Boolean logback;
 
     public MetricsProperties() {
         enabled = true;

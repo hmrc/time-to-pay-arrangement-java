@@ -13,4 +13,5 @@ class IntegrationSpec extends Specification {
     @Autowired
     def TestRestTemplate testRestTemplate
 
+
 }
