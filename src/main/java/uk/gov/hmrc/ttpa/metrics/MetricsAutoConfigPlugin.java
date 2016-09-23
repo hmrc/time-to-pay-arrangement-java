@@ -8,6 +8,8 @@ import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
+import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @EnableConfigurationProperties(value = MetricsProperties.class)
 @ConditionalOnProperty(prefix = MetricsProperties.PREFIX, name = "enabled", havingValue = "true")
 @Configuration
-public class MetricsAutoConfigPlugin {
+@EnableMetrics
+public class MetricsAutoConfigPlugin extends MetricsConfigurerAdapter {
 
     private MetricRegistry metricRegistry;
     private ObjectMapper objectMapper;
@@ -49,12 +52,18 @@ public class MetricsAutoConfigPlugin {
     }
 
 
+    @Override
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
+    }
+
     @Bean
     public MetricRegistryListener metricRegistryListener() {
         return new MetricRegistryListener();
     }
 
     public static class MetricRegistryListener implements ServletContextListener {
+
         @Autowired
         private MetricRegistry metricRegistry;
 
@@ -64,9 +73,7 @@ public class MetricsAutoConfigPlugin {
         }
 
         @Override
-        public void contextDestroyed(ServletContextEvent sce) {
-
-        }
+        public void contextDestroyed(ServletContextEvent sce) {}
     }
 
 
