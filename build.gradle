@@ -82,6 +82,10 @@ task tar(type: Tar, dependsOn: bootRepackage) {
         fileMode 0755
         into("${this.project.name}-${this.project.version}/bin")
     }
+    from ('gradle-sm') {
+        fileMode 0755
+        into("${this.project.name}-${this.project.version}/bin")
+    }
     extension = 'tgz'
     compression = Compression.GZIP
 }

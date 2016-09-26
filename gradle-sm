@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+gradlew bootRun -Dspring.profiles.active=Dev -Dapplication.name='time-to-pay-arrangement'
