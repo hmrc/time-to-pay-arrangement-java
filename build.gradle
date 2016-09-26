@@ -113,6 +113,8 @@ license {
     }
 }
 
+defaultTasks 'clean', 'licenseFormatMain', 'test'
+
 bintray {
     user = credentialsProperty('user')
     key = credentialsProperty('password')
