@@ -22,13 +22,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AuditFilter implements Filter {
 
     private AuditService auditService;
+    private AuditConfigProperties auditConfigProperties;
+    private AuditEventGenerator auditEventGenerator;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -39,8 +45,24 @@ public class AuditFilter implements Filter {
     public void doFilter(ServletRequest request,
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        if (shouldAudit(httpServletRequest.getRequestURI())) {
+            try {
+                chain.doFilter(request, response);
+            } finally {
+                Object event = auditEventGenerator.createEvent(request, response);
+                auditService.audit(event);
+            }
 
-        chain.doFilter(request, response);
+        } else {
+            chain.doFilter(request, response);
+        }
+    }
+
+    private boolean shouldAudit(String requestUri) {
+        return !ofNullable(auditConfigProperties.getExclusions())
+                .orElse(new ArrayList<>())
+                .contains(requestUri);
     }
 
     @Override

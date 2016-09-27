@@ -23,6 +23,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import java.util.List;
+
 import static java.lang.Boolean.TRUE;
 
 @ConfigurationProperties(
@@ -34,6 +36,7 @@ public class AuditConfigProperties {
     public static final String PREFIX = "auditing.";
 
     private Boolean enabled;
+    private List<String> exclusions;
     private Boolean traceRequests = TRUE;
     @Valid
     @NotNull(message = "Missing consumer configuration for auditing")

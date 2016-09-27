@@ -16,8 +16,18 @@
  */
 package uk.gov.hmrc.ttpa.audit;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public interface AuditService {
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 
-    void audit(Object event);
+@Slf4j
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+public class AuditEventGenerator {
+
+    public Object createEvent(ServletRequest request, ServletResponse response) {
+        return null;
+    }
 }

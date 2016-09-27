@@ -41,8 +41,14 @@ public class AuditAutoConfiguration {
     }
 
     @Bean
-    public AuditFilter auditFilter(AuditService auditService) {
-        return new AuditFilter(auditService);
+    public AuditFilter auditFilter(AuditService auditService,
+                                   AuditEventGenerator auditEventGenerator) {
+        return new AuditFilter(auditService, auditConfigProperties, auditEventGenerator);
+    }
+
+    @Bean
+    public AuditEventGenerator auditEventGenerator() {
+        return new AuditEventGenerator();
     }
 
 }

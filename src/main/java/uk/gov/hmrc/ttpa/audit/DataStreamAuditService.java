@@ -25,4 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class DataStreamAuditService implements AuditService {
 
     private AuditConfigProperties auditConfigProperties;
+
+    @Override
+    public void audit(Object event) {
+
+    }
 }
