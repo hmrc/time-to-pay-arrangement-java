@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/hmrc/time-to-pay-arrangement.svg?branch=master)](https://travis-ci.org/hmrc/time-to-pay-arrangement) [ ![Download](https://api.bintray.com/packages/hmrc/releases/time-to-pay-arrangement/images/download.svg) ](https://bintray.com/hmrc/releases/time-to-pay-arrangement/_latestVersion)
 
-This is a placeholder README.md for a new repository
+To apply the HMRC License to this project, run gradle with the licenseFormatMain argument, or just run gradle with no arguments (it will run as a default task).
 
 ### License
 
