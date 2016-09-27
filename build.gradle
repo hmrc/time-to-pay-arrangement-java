@@ -13,10 +13,9 @@ buildscript {
         classpath "com.palantir.gradle.gitversion:gradle-git-version:0.5.2"
         classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.1"
         classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.7'
+        classpath "nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0"
     }
 }
-
-buildDir = 'target'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
@@ -27,6 +26,9 @@ apply plugin: "com.jfrog.bintray"
 apply plugin: 'maven-publish'
 apply plugin: 'distribution'
 apply plugin: 'propdeps'
+apply plugin: 'license'
+
+buildDir = 'target'
 
 jar {
     baseName = 'time-to-pay-arrangement'
@@ -72,7 +74,6 @@ dependencies {
 
 compileJava.dependsOn(processResources)
 
-
 task tar(type: Tar, dependsOn: bootRepackage) {
     from('target/libs') {
         include '*.jar'
@@ -100,6 +101,18 @@ publishing {
         }
     }
 }
+
+license {
+    header = rootProject.file('HMRC-LICENSE')
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'HM Revenue & Customs'
+    include "**/*.java"
+    mapping {
+        java = 'SLASHSTAR_STYLE'
+    }
+}
+
+defaultTasks 'clean', 'licenseFormatMain', 'test'
 
 bintray {
     user = credentialsProperty('user')
