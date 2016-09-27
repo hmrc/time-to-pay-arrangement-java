@@ -29,11 +29,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @EnableConfigurationProperties(value = {AuditConfigProperties.class})
-@ConditionalOnProperty(prefix = AuditConfigProperties.PREFIX, name = "enabled", havingValue = "true")
 @Configuration
+@ConditionalOnProperty(prefix = AuditConfigProperties.PREFIX, name = "enabled", havingValue = "true")
 public class AuditAutoConfiguration {
 
-    @Autowired
     private AuditConfigProperties auditConfigProperties;
 
     @Bean

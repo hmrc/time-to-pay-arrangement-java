@@ -40,6 +40,7 @@ public class AuditFilter implements Filter {
                          ServletResponse response,
                          FilterChain chain) throws IOException, ServletException {
 
+        chain.doFilter(request, response);
     }
 
     @Override
