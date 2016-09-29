@@ -19,5 +19,5 @@ package uk.gov.hmrc.ttpa.audit;
 
 public interface AuditService {
 
-    void audit(Object event);
+    void audit(AuditEvent.DataEvent event);
 }

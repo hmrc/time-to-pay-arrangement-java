@@ -19,15 +19,79 @@ package uk.gov.hmrc.ttpa.audit;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.lang.String.format;
+import static java.time.LocalDateTime.now;
+import static java.util.Optional.ofNullable;
 
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class AuditEventGenerator {
 
-    public Object createEvent(ServletRequest request, ServletResponse response) {
-        return null;
+    private AuditConfigProperties auditConfigProperties;
+
+    private AuditExtensions auditExtensions;
+
+    public AuditEvent.DataEvent createSingleAuditEvent(HttpServletRequest request,
+                                                       HttpServletResponse httpServletResponse) {
+
+
+        HeaderCarrier headerCarrier = HeaderCarrier.create(request);
+
+        Map<String, String> requiredFields = createRequiredFields(request, httpServletResponse, headerCarrier);
+        Map<String, String> tags = createTags(request, headerCarrier);
+
+        AuditEvent.DataEvent dataEvent = new AuditEvent.DataEvent();
+        dataEvent.setAuditType(Event.Type.REQUEST_RECEIVED.name());
+        dataEvent.setDetail(requiredFields);
+        dataEvent.setTags(tags);
+        dataEvent.setAuditSource(auditConfigProperties.getSource());
+        dataEvent.setGeneratedAt(now());
+        return dataEvent;
     }
+
+
+    private Map<String, String> createTags(HttpServletRequest request,
+                                           HeaderCarrier headerCarrier) {
+
+        Map<String, String> tags = new HashMap<>();
+        tags.putAll(auditExtensions.createAuditTags(headerCarrier));
+        tags.put(Event.Key.TRANSACTION_NAME, buildQueryUri(request));
+        tags.put(Event.Key.PATH, request.getRequestURI());
+        return tags;
+    }
+
+
+    private String buildQueryUri(HttpServletRequest req) {
+        StringBuffer url = req.getRequestURL();
+        String queryString = req.getQueryString();
+        if (queryString != null) {
+            url.append('?');
+            url.append(queryString);
+        }
+        return url.toString();
+    }
+
+    private Map<String, String> createRequiredFields(HttpServletRequest request,
+                                                     HttpServletResponse httpServletResponse,
+                                                     HeaderCarrier headerCarrier) {
+
+        Map<String, String> requiredFields = new HashMap<>();
+
+        requiredFields.putAll(auditExtensions.createAuditDetails(headerCarrier));
+        requiredFields.put(Event.Key.INPUT, format("Request to %s", request.getRequestURI()));
+        requiredFields.put(Event.Key.METHOD, request.getMethod().toUpperCase());
+        requiredFields.put(Event.Key.USER_AGENT_STRING, ofNullable(request.getHeader(HttpHeaders.USER_AGENT)).orElse("-"));
+        requiredFields.put(Event.Key.REFERRER, ofNullable(request.getHeader(HttpHeaders.REFERER)).orElse("-"));
+        requiredFields.put(Event.Key.STATUS_CODE, HttpStatus.valueOf(httpServletResponse.getStatus()).toString());
+        return requiredFields;
+    }
+
 }

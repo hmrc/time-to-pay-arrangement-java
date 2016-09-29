@@ -16,18 +16,39 @@
  */
 package uk.gov.hmrc.ttpa.audit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
+@Async
 public class DataStreamAuditService implements AuditService {
 
     private AuditConfigProperties auditConfigProperties;
+    private RestTemplate restTemplate;
+    private ObjectMapper objectMapper;
+
 
     @Override
-    public void audit(Object event) {
+    public void audit(AuditEvent.DataEvent event) {
+        log.info("Sending audit event '{}' to datastream", event);
+        ResponseEntity<String> response;
+        try {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(event), httpHeaders);
+            response = restTemplate.exchange(auditConfigProperties.getSingleEventUrl(), HttpMethod.POST, entity, String.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
+        log.info("Response from datastream '{}'", response.getStatusCode());
     }
+
 }

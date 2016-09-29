@@ -17,43 +17,49 @@
 package uk.gov.hmrc.ttpa.audit;
 
 
+import javaslang.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import static java.util.Optional.ofNullable;
 
 @Slf4j
 @AllArgsConstructor(onConstructor = @__(@Autowired))
-public class AuditFilter implements Filter {
+public class AuditFilter extends OncePerRequestFilter {
 
     private AuditService auditService;
     private AuditConfigProperties auditConfigProperties;
     private AuditEventGenerator auditEventGenerator;
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        if (shouldAudit(httpServletRequest.getRequestURI())) {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        if (shouldAudit(request.getRequestURI())) {
+            AuditEvent.DataEvent auditEvent = auditEventGenerator.createSingleAuditEvent(request, response);
             try {
-                chain.doFilter(request, response);
-            } finally {
-                Object event = auditEventGenerator.createEvent(request, response);
-                auditService.audit(event);
-            }
 
+                response = new ResponseWrapper(response);
+                chain.doFilter(request, response);
+
+                auditService.audit(auditEvent.withDetail(
+                        Tuple.of(Event.Key.RESPONSE_MESSAGE, new String(((ResponseWrapper)response).toByteArray()))
+                ));
+            } catch (Exception e) {
+                auditService.audit(auditEvent.withDetail(
+                        Tuple.of(Event.Key.FAILED_REQUEST_REASON, e.getMessage())
+                ));
+            }
         } else {
             chain.doFilter(request, response);
         }
@@ -67,6 +73,5 @@ public class AuditFilter implements Filter {
 
     @Override
     public void destroy() {
-
     }
 }

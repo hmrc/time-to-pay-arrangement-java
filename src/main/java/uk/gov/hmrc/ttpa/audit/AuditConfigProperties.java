@@ -22,7 +22,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.util.List;
 
 import static java.lang.Boolean.TRUE;
@@ -33,14 +32,45 @@ import static java.lang.Boolean.TRUE;
 @Data
 public class AuditConfigProperties {
 
+    private static final String SINGLE_EVENT_PATH = "write/audit";
+    private static final String MERGED_EVENT_PATH = "write/audit/merged";
+    private static final String LARGE_MERGED_EVENT_PATH = "write/audit/merged/large";
+
     public static final String PREFIX = "auditing.";
 
     private Boolean enabled;
     private List<String> exclusions;
     private Boolean traceRequests = TRUE;
+    private String source;
     @Valid
     @NotNull(message = "Missing consumer configuration for auditing")
     private Consumer consumer;
+
+
+    public String getSingleEventUrl() {
+        return createContext()
+                .append(SINGLE_EVENT_PATH).toString();
+    }
+
+    public String getMergedEventUrl() {
+        return createContext()
+                .append(MERGED_EVENT_PATH).toString();
+    }
+
+    public String getLargeMergedEventUrl() {
+        return createContext()
+                .append(LARGE_MERGED_EVENT_PATH).toString();
+    }
+
+    private StringBuilder createContext() {
+        return new StringBuilder()
+                .append(consumer.baseUri.getProtocol())
+                .append("://")
+                .append(consumer.baseUri.getHost())
+                .append(":")
+                .append(consumer.baseUri.getPort())
+                .append("/");
+    }
 
     @Data
     public static class Consumer {
