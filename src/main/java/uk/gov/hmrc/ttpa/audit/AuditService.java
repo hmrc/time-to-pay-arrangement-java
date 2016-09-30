@@ -14,19 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.gov.hmrc.ttpa;
+package uk.gov.hmrc.ttpa.audit;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
-@Configuration
-@Slf4j
-public class ApplicationConfig {
+public interface AuditService {
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+    void audit(AuditEvent.DataEvent event);
 }

@@ -10,7 +10,7 @@ import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration
-@TestPropertySource(properties = "microservice.metrics.graphite.enabled=false")
+@TestPropertySource(properties = ["microservice.metrics.graphite.enabled=false", "auditing.enabled=false"])
 class IntegrationSpec extends Specification {
 
     @Autowired
