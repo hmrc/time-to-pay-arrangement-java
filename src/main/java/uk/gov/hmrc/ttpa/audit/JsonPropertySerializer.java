@@ -39,7 +39,8 @@ import java.util.TimeZone;
 public class JsonPropertySerializer {
     private static final ZoneId zoneId = TimeZone.getTimeZone("UTC").toZoneId();
 
-    public static final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    public static final DateTimeFormatter localDateTimeFormatter = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .withZone(zoneId);
 
     public static class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {

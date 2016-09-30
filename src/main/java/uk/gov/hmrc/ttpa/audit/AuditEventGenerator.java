@@ -54,7 +54,9 @@ public class AuditEventGenerator {
         dataEvent.setAuditType(Event.Type.REQUEST_RECEIVED.name());
         dataEvent.setDetail(requiredFields);
         dataEvent.setTags(tags);
-        dataEvent.setAuditSource(auditConfigProperties.getSource());
+        dataEvent.setAuditSource(ofNullable(auditConfigProperties.getSource()).orElse(
+                System.getProperty("application.name")
+        ));
         dataEvent.setGeneratedAt(now());
         return dataEvent;
     }

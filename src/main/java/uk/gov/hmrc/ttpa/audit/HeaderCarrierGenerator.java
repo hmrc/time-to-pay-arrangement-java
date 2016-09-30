@@ -47,9 +47,7 @@ public class HeaderCarrierGenerator {
 
     private Environment environment;
 
-
     public HeaderCarrier create(HttpServletRequest request) {
-
         return ofNullable(request.getSession())
                 .map(s -> this.createFromSession(request,s))
                 .orElse(createFromHeaders(request));
