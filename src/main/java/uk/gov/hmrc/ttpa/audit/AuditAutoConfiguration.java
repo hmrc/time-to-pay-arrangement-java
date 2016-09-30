@@ -53,8 +53,9 @@ public class AuditAutoConfiguration {
     }
 
     @Bean
-    public AuditEventGenerator auditEventGenerator(AuditExtensions auditExtensions) {
-        return new AuditEventGenerator(auditConfigProperties, auditExtensions);
+    public AuditEventGenerator auditEventGenerator(AuditExtensions auditExtensions,
+                                                   HeaderCarrierGenerator headerCarrierGenerator) {
+        return new AuditEventGenerator(auditConfigProperties, auditExtensions, headerCarrierGenerator);
     }
 
 }

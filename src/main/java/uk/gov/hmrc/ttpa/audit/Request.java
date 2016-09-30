@@ -17,9 +17,10 @@
 package uk.gov.hmrc.ttpa.audit;
 
 
-import javaslang.collection.List;
-import javaslang.collection.Seq;
 import org.springframework.http.HttpHeaders;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Request {
 
@@ -46,7 +47,7 @@ public class Request {
         public static final String akamaiReputation = "Akamai-Reputation";
 
 
-        public static final Seq explicitlyIncludedHeaders = List.of(
+        public static final List<String> explicitlyIncludedHeaders = Arrays.asList(
                 authorisation,
                 xForwardedFor,
                 xRequestId,

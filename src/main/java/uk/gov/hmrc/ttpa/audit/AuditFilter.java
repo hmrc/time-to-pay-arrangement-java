@@ -48,10 +48,8 @@ public class AuditFilter extends OncePerRequestFilter {
         if (shouldAudit(request.getRequestURI())) {
             AuditEvent.DataEvent auditEvent = auditEventGenerator.createSingleAuditEvent(request, response);
             try {
-
                 response = new ResponseWrapper(response);
                 chain.doFilter(request, response);
-
                 auditService.audit(auditEvent.withDetail(
                         Tuple.of(Event.Key.RESPONSE_MESSAGE, new String(((ResponseWrapper)response).toByteArray()))
                 ));

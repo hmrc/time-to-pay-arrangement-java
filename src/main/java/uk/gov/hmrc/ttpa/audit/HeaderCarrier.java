@@ -18,11 +18,11 @@ package uk.gov.hmrc.ttpa.audit;
 
 
 import javaslang.Tuple2;
-import javaslang.collection.Seq;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -34,23 +34,17 @@ public class HeaderCarrier {
     private String forwarded;
     private String sessionId;
     private String requestId;
+    private String requestChain;
     private Long nsStamp = System.nanoTime();
-    private Seq<Tuple2<String, String>> extraHeaders;
+    @Singular
+    private Set<Tuple2<String, String>> extraHeaders;
     private String trueClientIp;
     private String trueClientPort;
     private String gaToken;
     private String gaUserId;
     private String deviceId;
     private String akamaiReputation;
-    private Seq<Tuple2<String, String>> otherHeaders;
+    @Singular
+    private Set<Tuple2<String, String>> otherHeaders;
 
-    public static HeaderCarrier create(HttpServletRequest request) {
-
-        HeaderCarrier headerCarrier = HeaderCarrier
-                .builder()
-
-                .build();
-
-        return headerCarrier;
-    }
 }

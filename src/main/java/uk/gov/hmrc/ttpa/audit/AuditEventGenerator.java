@@ -39,11 +39,13 @@ public class AuditEventGenerator {
 
     private AuditExtensions auditExtensions;
 
+    private HeaderCarrierGenerator headerCarrierGenerator;
+
     public AuditEvent.DataEvent createSingleAuditEvent(HttpServletRequest request,
                                                        HttpServletResponse httpServletResponse) {
 
 
-        HeaderCarrier headerCarrier = HeaderCarrier.create(request);
+        HeaderCarrier headerCarrier = headerCarrierGenerator.create(request);
 
         Map<String, String> requiredFields = createRequiredFields(request, httpServletResponse, headerCarrier);
         Map<String, String> tags = createTags(request, headerCarrier);
