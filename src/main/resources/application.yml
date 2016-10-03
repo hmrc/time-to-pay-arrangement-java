@@ -1,0 +1,43 @@
+spring:
+  main:
+    banner-mode: 'off'
+
+server:
+  port: ${http.port:8080}
+
+
+metrics:
+  enabled: true
+  logback: true
+  jvm:   true
+  sets: com.codahale.metrics.jvm.GarbageCollectorMetricSet,\
+    com.codahale.metrics.jvm.MemoryUsageGaugeSet,\
+    com.codahale.metrics.jvm.ThreadStatesGaugeSet
+
+
+microservice:
+  metrics:
+    graphite:
+      enabled: true
+      port: 2003
+      host: localhost
+      prefix: ${application.name}
+
+
+
+endpoints:
+  metrics:
+    filter:
+      enabled: false
+
+auditing:
+  enabled: true
+  traceRequests: true
+  source: ${application.name}
+  consumer:
+    baseUri:
+      port: 9000
+      host: localhost
+  exclusions:
+    - /ping/ping
+
