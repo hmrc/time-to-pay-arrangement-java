@@ -10,8 +10,8 @@ metrics:
   enabled: true
   logback: true
   jvm:   true
-  sets: com.codahale.metrics.jvm.GarbageCollectorMetricSet,\
-    com.codahale.metrics.jvm.MemoryUsageGaugeSet,\
+  sets: com.codahale.metrics.jvm.GarbageCollectorMetricSet,
+    com.codahale.metrics.jvm.MemoryUsageGaugeSet,
     com.codahale.metrics.jvm.ThreadStatesGaugeSet
 
 
