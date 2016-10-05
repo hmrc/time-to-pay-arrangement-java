@@ -39,7 +39,7 @@ public class AuditEvent {
     public static class DataEvent extends AuditEvent {
         private Map<String, String> detail = new HashMap<>();
 
-        public DataEvent withDetail(Tuple2<String,String> data) {
+        public DataEvent withDetail(Tuple2<String, String> data) {
             detail.put(data._1, data._2);
             return this;
         }
@@ -53,8 +53,8 @@ public class AuditEvent {
     @Data
     public static class DataCall {
 
-        private Map<String,String> tags;
-        private Map<String,String> details;
+        private Map<String, String> tags;
+        private Map<String, String> details;
         private LocalDateTime generatedAt;
 
     }

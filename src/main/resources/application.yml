@@ -3,11 +3,11 @@ spring:
     banner-mode: 'off'
 
 server:
-  port: ${http.port:8080}
+  port: ${http.port?:8080}
 
 
 metrics:
-  enabled: true
+  enabled: ${metrics.enabled?:true}
   logback: true
   jvm:   true
   sets: com.codahale.metrics.jvm.GarbageCollectorMetricSet,
@@ -18,9 +18,9 @@ metrics:
 microservice:
   metrics:
     graphite:
-      enabled: true
-      port: 2003
-      host: localhost
+      enabled: ${microservice.metrics.graphite.enabled?:true}
+      port: ${microservice.metrics.graphite.port?:2003}
+      host: ${microservice.metrics.graphite.host?:localhost}
       prefix: ${application.name}
 
 
@@ -30,14 +30,15 @@ endpoints:
     filter:
       enabled: false
 
+
 auditing:
-  enabled: true
-  traceRequests: true
+  enabled: ${auditing.enabled?:true}
+  traceRequests: ${auditing.traceRequests?:true}
   source: ${application.name}
   consumer:
     baseUri:
-      port: 9000
-      host: localhost
+      port: ${auditing.consumer.baseUri.port?:9000}
+      host: ${auditing.consumer.baseUri.host?:localhost}
   exclusions:
     - /ping/ping
 
