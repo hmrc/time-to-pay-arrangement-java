@@ -40,7 +40,7 @@ jar {
     version = gitVersion()
     manifest {
         attributes(
-                "Git-Describe" : "Test",
+                "Git-Describe" : grgit.repository.jgit.describe().call(),
                 "Git-Commit-Date" : grgit.head().date.format(datePattern),
                 "Git-Commit-Author" : grgit.head().committer.name,
                 "Git-Repo-Is-Clean" : Boolean.toString(grgit.repository.jgit.status().call().isClean()),
